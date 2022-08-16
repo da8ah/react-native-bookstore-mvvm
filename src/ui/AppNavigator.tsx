@@ -8,8 +8,8 @@ import HomeBooksScreen from './HomeBooksScreen';
 import LoginScreen from './LoginScreen';
 import PaymentScreen from './PaymentScreen';
 
-const HomeIcon = (props: { color: string }) => (
-    <Icon name='home-outline' {...props} />
+const HomeIcon = () => (
+    <Icon name='home-outline' color='darkred' size='10' />
 );
 
 const Tab = createBottomTabNavigator();
