@@ -10,7 +10,7 @@ export class Book {
     private isbn: string;
     private author: string;
     private title: string;
-    private description: string | null;
+    private description: string | null = null;
     private price: number = 0;
 
     constructor({ isbn, author, title, description, price }: BookParamList) {

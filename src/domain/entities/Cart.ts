@@ -14,6 +14,7 @@ export class User {
     constructor({ userName, listBooks }: CartParamList) {
         this.userName = userName;
         this.listBooks = listBooks;
+        this.calcTotal();
     }
 
     // Setters
@@ -36,11 +37,11 @@ export class User {
         return this.total;
     }
 
-    public calcTotal(): number {
+    public calcTotal() {
         const total = this.listBooks.reduce((accumulator, book) => {
             return accumulator + book.getPrice();
         }, 0);
         console.log(total);
-        return total;
+        this.total = total;
     }
 }
