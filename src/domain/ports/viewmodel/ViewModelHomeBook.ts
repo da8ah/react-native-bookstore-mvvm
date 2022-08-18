@@ -8,7 +8,7 @@ type ViewModelHomeBooksParamList = {
     _price: number
 }
 
-class BookModel implements ViewModelHomeBooksParamList {
+export class BookModel implements ViewModelHomeBooksParamList {
     _isbn: string;
     _author: string;
     _title: string;
@@ -19,6 +19,20 @@ class BookModel implements ViewModelHomeBooksParamList {
         this._author = author;
         this._title = title;
         this._price = price;
+    }
+
+    // Getters
+    public getIsbn(): string {
+        return this._isbn;
+    }
+    public getAuthor(): string {
+        return this._author;
+    }
+    public getTitle(): string {
+        return this._title;
+    }
+    public getPrice(): number {
+        return this._price;
     }
 }
 
