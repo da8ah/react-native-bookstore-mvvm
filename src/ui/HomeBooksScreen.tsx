@@ -1,6 +1,6 @@
 import { Button, Divider, Layout, List, Text } from '@ui-kitten/components';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { BookModel, ViewModelHomeBooks } from '../domain/ports/viewmodel/ViewModelHomeBook';
+import { ViewModelHomeBooks } from '../domain/ports/viewmodel/ViewModelHomeBook';
 import { HomeBooksScreenProps } from './ScreenTypes';
 
 const styles = StyleSheet.create({
@@ -25,18 +25,18 @@ const styles = StyleSheet.create({
     bookLayout: {
         flexDirection: 'row',
         paddingHorizontal: 10,
-        paddingVertical: 4
+        paddingVertical: 10,
+        marginVertical: 5
     },
     bookInfoLayout: {
-        width: '80%'
+        width: '60%'
     },
     bookPriceLayout: {
-        width: '20%',
+        width: '40%',
         justifyContent: 'center',
         alignItems: 'center',
         alignContent: 'center',
-        textAlign: 'center',
-        backgroundColor: 'grey'
+        textAlign: 'center'
     },
     bookAuthorAndIsbnLayout: {
         flexDirection: 'row'
@@ -49,35 +49,32 @@ const styles = StyleSheet.create({
         textAlign: 'right'
     },
     bookTitle: {
-        // backgroundColor: 'darkred',
-        // color: 'white'
+        paddingBottom: 4
     },
     bookPrice: {
-        // backgroundColor: 'darkblue',
-        // color: 'white',
         fontSize: 30
     },
 });
 
-const renderBookItem = (book: any) => (
+const renderBookItem = (listBooks: any) => (
     <Layout style={styles.bookLayout}>
         <Layout style={styles.bookInfoLayout}>
             <Layout style={styles.bookAuthorAndIsbnLayout}>
                 <Text style={styles.bookAuthor}>
-                    {book.item.getAuthor()}
+                    {listBooks.item.getAuthor()}
                 </Text>
                 <Text style={styles.bookIsbn}>
-                    {book.item.getIsbn()}
+                    {listBooks.item.getIsbn()}
                 </Text>
             </Layout>
             <Divider />
             <Text style={styles.bookTitle}>
-                {book.item.getTitle()}
+                {listBooks.item.getTitle()}
             </Text>
         </Layout>
         <Layout style={styles.bookPriceLayout}>
             <Text style={styles.bookPrice}>
-                $ {book.item.getPrice()}
+                $ {listBooks.item.getPrice()}
             </Text>
         </Layout>
     </Layout>
@@ -97,9 +94,9 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Button style={{ width: '50%' }} onPress={navigateLogin}>Login</Button>
-                <Button style={{ width: '50%' }} onPress={homeBookController}>Data</Button>
-                <Text category='h3' status='success' appearance='hint' style={styles.header}>BOOKS</Text>
+                {/* {<Button style={{ width: '50%' }} onPress={navigateLogin}>Login</Button>
+                <Button style={{ width: '50%' }} onPress={homeBookController}>Data</Button>} */}
+                <Text category='h3' status='primary' appearance='hint' style={styles.header}>Welcome to BOOKSTORE!</Text>
                 <List
                     style={styles.listContainer}
                     contentContainerStyle={styles.contentContainer}

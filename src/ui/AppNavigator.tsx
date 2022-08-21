@@ -1,3 +1,4 @@
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,32 +9,47 @@ import HomeBooksScreen from './HomeBooksScreen';
 import LoginScreen from './LoginScreen';
 import PaymentScreen from './PaymentScreen';
 
-const HomeIcon = () => (
-    <Icon name='home-outline' color='darkred' size='10' />
+const HomeIcon = (props: any) => (
+    <Icon name='home' {...props} />
+);
+
+const AddIcon = () => (
+    <Icon name='plus-circle' color='darkred' size='50' />
 );
 
 const Tab = createBottomTabNavigator();
 
 function MainBottomTabNavigator() {
     return (
-        <Tab.Navigator screenOptions={{ headerShown: false, tabBarActiveTintColor: '#e91e63' }}>
+        <Tab.Navigator screenOptions={
+            { headerShown: false, tabBarActiveTintColor: '#e91e63' }
+        }>
             <Tab.Screen
                 name="Home"
-                component={HomeNavigator}
+                component={HomeToPaymentNavigator}
                 options={
                     {
                         tabBarLabel: 'Home',
-                        tabBarIcon: HomeIcon
+                        //tabBarIcon: ({ color, size }) => (<Icon name='home' color={color} size={size} />)
                     }
                 } />
-            <Tab.Screen name="New" component={AddBookScreen} options={{ tabBarLabel: 'Add' }} />
-        </Tab.Navigator>
+            <Tab.Screen
+                name="New"
+                component={AddBookScreen}
+                options={
+                    {
+                        tabBarLabel: 'Add',
+                        tabBarIcon: AddIcon,
+                        tabBarIconStyle: { backgroundColor: 'red', color: 'blue', fontSize: 25 }
+                    }
+                } />
+        </Tab.Navigator >
     );
 }
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
-const HomeNavigator = () => (
+const HomeToPaymentNavigator = () => (
     <Navigator>
         <Screen name='Books' component={HomeBooksScreen} />
         <Screen name='Login' component={LoginScreen} />
