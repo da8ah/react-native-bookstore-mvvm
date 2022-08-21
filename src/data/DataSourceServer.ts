@@ -1,5 +1,5 @@
-import { Book } from "../domain/entities/Book";
-import { IRepository } from "../domain/ports/IRepository";
+import { Book } from "../core/entities/Book";
+import { IRepository } from "../core/ports/IRepository";
 
 export class DataSourceServer implements IRepository {
 
@@ -8,7 +8,7 @@ export class DataSourceServer implements IRepository {
     ): Promise<Book[]> {
         try {
             let data: Book[] = [];
-            await fetch(apiString)
+            data = await fetch(apiString)
                 .then(res => res.json())
                 .then(data => {
                     return data.map((item: any) => {
@@ -19,11 +19,7 @@ export class DataSourceServer implements IRepository {
                         const price = Number.parseFloat((Math.round((Math.random() * 10 + 1)) * 10 + 9.99).toFixed(2));
                         return new Book({ isbn, author, title, description, price });
                     });
-                })
-                .then(books => {
-                    data = books;
                 });
-            console.log(data);
             return data;
         } catch (error) {
             console.error(error);
