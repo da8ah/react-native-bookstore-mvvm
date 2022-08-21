@@ -1,6 +1,6 @@
 import { Divider, Layout, List, Text, Button } from '@ui-kitten/components';
-import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, SafeAreaView, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Pressable, SafeAreaView, StyleSheet } from 'react-native';
 import { Book } from '../core/entities/Book';
 import { ViewModelHomeBooks } from '../core/ports/viewmodels/ViewModelHomeBook';
 import { HomeBooksScreenProps } from './ScreenTypes';
@@ -64,28 +64,34 @@ const styles = StyleSheet.create({
     },
 });
 
+let login: any = () => {
+    console.log("Here goes navigateLogin arrow function!");
+};
+
 const renderBookItem = (allBooks: any) => (
-    <Layout style={styles.bookLayout}>
-        <Layout style={styles.bookInfoLayout}>
-            <Layout style={styles.bookAuthorAndIsbnLayout}>
-                <Text style={styles.bookAuthor}>
-                    {allBooks.item.getAuthor()}
-                </Text>
-                <Text style={styles.bookIsbn}>
-                    {allBooks.item.getIsbn()}
+    <Pressable onPress={login}>
+        <Layout style={styles.bookLayout}>
+            <Layout style={styles.bookInfoLayout}>
+                <Layout style={styles.bookAuthorAndIsbnLayout}>
+                    <Text style={styles.bookAuthor}>
+                        {allBooks.item.getAuthor()}
+                    </Text>
+                    <Text style={styles.bookIsbn}>
+                        {allBooks.item.getIsbn()}
+                    </Text>
+                </Layout>
+                <Divider />
+                <Text style={styles.bookTitle}>
+                    {allBooks.item.getTitle()}
                 </Text>
             </Layout>
-            <Divider />
-            <Text style={styles.bookTitle}>
-                {allBooks.item.getTitle()}
-            </Text>
+            <Layout style={styles.bookPriceLayout}>
+                <Text style={styles.bookPrice}>
+                    $ {allBooks.item.getPrice()}
+                </Text>
+            </Layout>
         </Layout>
-        <Layout style={styles.bookPriceLayout}>
-            <Text style={styles.bookPrice}>
-                $ {allBooks.item.getPrice()}
-            </Text>
-        </Layout>
-    </Layout>
+    </Pressable>
 );
 
 const viewModelHomeBooks = new ViewModelHomeBooks();
