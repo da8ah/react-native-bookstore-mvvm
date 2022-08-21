@@ -7,24 +7,24 @@ export type ReactComponentObserver = () => void;
 
 export class ViewModelHomeBooks {
     private observers: ReactComponentObserver[] = [];
-    private loading: boolean = true;
+    private loading: boolean = false;
     private displayBooksUseCase = new DisplayBooks();
     private repository: IRepository = new DataSourceServer();
-    private data: Book[] = [];
+    private data: Book[] | null = [];
 
     public async getDataFromServer() {
         this.loading = true;
         this.data = await this.displayBooksUseCase.queryAllBooks(this.repository);
-        console.log(this.data);
         this.loading = false;
     }
 
     public isLoading(): boolean {
+        console.log(this.loading);
         return this.loading;
     }
 
-    public getBooksStored(): Book[] {
-        // return [new Book({ isbn: "", author: "", title: "", description: null, price: 0 })];
+    public getBooksStored(): Book[] | null {
         return this.data;
+        // return new Book({ isbn: "", author: "", title: "", description: null, price: 0 })
     }
 }

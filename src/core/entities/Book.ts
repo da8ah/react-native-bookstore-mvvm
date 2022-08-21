@@ -36,7 +36,7 @@ export class Book {
     }
     public setPrice(price: number) {
         if (price >= 0) this.price = price;
-        this.price = 0;
+        else this.price = 0;
     }
 
     // Getters

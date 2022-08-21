@@ -5,7 +5,7 @@ export class DataSourceServer implements IRepository {
 
     async queryAllBooks(
         apiString: string = 'https://expressjs-bookstore.herokuapp.com/api/books'
-    ): Promise<Book[]> {
+    ): Promise<Book[] | null> {
         try {
             let data: Book[] = [];
             data = await fetch(apiString)
@@ -23,7 +23,7 @@ export class DataSourceServer implements IRepository {
             return data;
         } catch (error) {
             console.error(error);
-            return [new Book({ isbn: "", author: "", title: "", description: null, price: 0 })];
+            return null;
         }
     }
 

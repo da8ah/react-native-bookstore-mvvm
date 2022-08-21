@@ -13,10 +13,14 @@ const styles = StyleSheet.create({
     },
     header: {
         width: '100%',
-        textAlign: 'center'
+        paddingVertical: 20,
+        textAlign: 'center',
+        color: 'white',
+        backgroundColor: 'black'
     },
     listContainer: {
-        flex: 1
+        flex: 1,
+        width: '100%'
     },
     contentContainer: {
         paddingHorizontal: 10,
@@ -27,18 +31,16 @@ const styles = StyleSheet.create({
     bookLayout: {
         flexDirection: 'row',
         paddingHorizontal: 10,
-        paddingVertical: 10,
-        marginVertical: 5
+        paddingVertical: 10
     },
     bookInfoLayout: {
-        width: '60%'
+        width: '70%'
     },
     bookPriceLayout: {
-        width: '40%',
+        width: '30%',
         justifyContent: 'center',
         alignItems: 'center',
-        alignContent: 'center',
-        textAlign: 'center'
+        alignContent: 'center'
     },
     bookAuthorAndIsbnLayout: {
         flexDirection: 'row'
@@ -48,13 +50,17 @@ const styles = StyleSheet.create({
     },
     bookIsbn: {
         width: '40%',
-        textAlign: 'right'
+        textAlign: 'right',
+        fontSize: 12
     },
     bookTitle: {
-        paddingBottom: 4
+        paddingBottom: 4,
+        fontWeight: 'bold',
+        fontStyle: 'italic'
     },
     bookPrice: {
-        fontSize: 30
+        fontSize: 20,
+        color: 'darkgreen'
     },
 });
 
@@ -90,40 +96,47 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
         navigation.navigate('Login');
     };
 
-    const [books, setBooks] = useState<Book[]>();
+    const [books, setBooks] = useState<Book[] | null>();
 
     const comprobarData = () => {
-        console.log(viewModelHomeBooks.isLoading());
         viewModelHomeBooks.getDataFromServer();
-        console.log(viewModelHomeBooks.getBooksStored());
         setBooks(viewModelHomeBooks.getBooksStored());
     };
 
+    useEffect(() => {
+        setTimeout(() => {
+            if (!viewModelHomeBooks.isLoading()) {
+                viewModelHomeBooks.getDataFromServer();
+                setBooks(viewModelHomeBooks.getBooksStored());
+            }
+        }, 2000);
+    }, [viewModelHomeBooks.isLoading()]);
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {/* 
-                <Button style={{ width: '50%' }} onPress={navigateLogin}>Login</Button>
-            {viewModelHomeBooks.isLoading() || !viewModelHomeBooks.getBooksStored() ?
+            {!books ?
                 (
                     <Layout style={styles.container}>
-                        <Text status='warning' appearance='hint'>Loading...</Text>
+                        <Divider />
                         <ActivityIndicator />
                     </Layout>
                 ) : (
-                    )
+                    <Layout style={styles.container}>
+                        {/* 
+                        <Button style={{ width: '50%' }} onPress={navigateLogin}>Login</Button>
+                        <Button style={{ width: '50%' }} onPress={comprobarData}>Data</Button>
+                        */}
+                        <Text category='h3' status='primary' style={styles.header}>Welcome to BOOKSTORE!</Text>
+                        <List
+                            style={styles.listContainer}
+                            contentContainerStyle={styles.contentContainer}
+                            data={books}
+                            renderItem={renderBookItem}
+                            listKey={'books'}
+                        />
+                    </Layout>
+                )
             }
-                */}
-            <Layout style={styles.container}>
-                <Button style={{ width: '50%' }} onPress={comprobarData}>Data</Button>
-                <Text category='h3' status='primary' appearance='hint' style={styles.header}>Welcome to BOOKSTORE!</Text>
-                <List
-                    style={styles.listContainer}
-                    contentContainerStyle={styles.contentContainer}
-                    data={books}
-                    renderItem={renderBookItem}
-                    listKey={'books'}
-                />
-            </Layout>
         </SafeAreaView>
     );
 
