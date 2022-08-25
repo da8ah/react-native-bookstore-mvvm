@@ -1,8 +1,9 @@
 import { Button, Card, Icon, Input, Layout, Text } from '@ui-kitten/components';
-import { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import { AddBookScreenProps } from './ScreenTypes';
+import { useEffect, useRef, useState } from 'react';
+import { Keyboard, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import ViewModelAddBook from '../core/ports/viewmodels/ViewModelAddBook';
 
+// Form Card Elements
 const Header = (props: any) => (
     <Layout {...props} style={[props.style, styles.topContainer]}>
         <Text category='h6'>New Book</Text>
@@ -25,44 +26,94 @@ const Footer = (props: any) => (
     </Layout>
 );
 
-
-const viewModel = [];
+// ViewModel
+const viewModelAddBook = new ViewModelAddBook();
 const addBookButton = () => {
-    console.log("Here addBookUseCase");
+    viewModelAddBook.createNewBook();
+    viewModelAddBook.saveNewBook();
 };
 
-const AddBookScreen = ({ navigation }: AddBookScreenProps) => {
+// Component
+const AddBookScreen = () => {
 
-    const [isbn, setIsbn] = useState('');
-    const [author, setAuthor] = useState('');
-    const [title, setTitle] = useState('');
+    // Input Persistence
+    let [isbn, setIsbn] = useState(viewModelAddBook.getIsbn());
+    let [author, setAuthor] = useState(viewModelAddBook.getAuthor());
+    let [title, setTitle] = useState(viewModelAddBook.getTitle());
+
+    // Keyboard and Scroll
+    const keyboardScrollScreenHeight = '170%';
+    let [screenHeight, setScreenHeight] = useState({ height: '100%' });
+    let isbnInputRef = useRef<Input>();
+    let authorInputRef = useRef<Input>();
+    let titleInputRef = useRef<Input>();
+
+    const setDefaultScrollHeight = () => {
+        if (!isbnInputRef.current?.isFocused() &&
+            !authorInputRef.current?.isFocused() &&
+            !titleInputRef.current?.isFocused()) { setScreenHeight({ height: '100%' }) };
+    }
+
+    // DidMount, DidUpdate, WillUpdate
+    useEffect(() => {
+        // Data Persistence
+        viewModelAddBook.setIsbn(isbn);
+        viewModelAddBook.setAuthor(author);
+        viewModelAddBook.setTitle(title);
+
+        // Keyboard and Scroll
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            setScreenHeight({ height: '100%' });
+        });
+
+        return () => {
+            keyboardDidHideListener.remove();
+        };
+    });
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Layout style={styles.container}>
                 <Text category='h3' status='primary' style={styles.header}>Welcome to BOOKSTORE!</Text>
-                <ScrollView contentContainerStyle={styles.formContainer}>
-                    <Card style={styles.card} header={Header} footer={Footer}>
+                <ScrollView contentContainerStyle={[styles.formContainer, screenHeight]} keyboardShouldPersistTaps='handled'>
+                    <Card
+                        style={styles.card}
+                        header={Header}
+                        footer={Footer}
+                        onBlur={() => setDefaultScrollHeight()}
+                    >
                         <Input
+                            ref={(component: Input) => isbnInputRef.current = component}
                             selectionColor='black'
                             style={styles.input}
-                            label='ISBN'
+                            label={'ISBN'}
                             value={isbn}
                             onChangeText={nextValue => setIsbn(nextValue)}
+                            onFocus={() => {
+                                if (screenHeight != { height: keyboardScrollScreenHeight }) setScreenHeight({ height: keyboardScrollScreenHeight });
+                            }}
                         />
                         <Input
+                            ref={(component: Input) => authorInputRef.current = component}
                             selectionColor='black'
                             style={styles.input}
-                            label='Author'
+                            label={'Author'}
                             value={author}
                             onChangeText={nextValue => setAuthor(nextValue)}
+                            onFocus={() => {
+                                if (screenHeight != { height: keyboardScrollScreenHeight }) setScreenHeight({ height: keyboardScrollScreenHeight });
+                            }}
                         />
                         <Input
+                            ref={(component: Input) => titleInputRef.current = component}
                             selectionColor='black'
                             style={styles.input}
-                            label='Title'
+                            label={'Title'}
                             value={title}
                             onChangeText={nextValue => setTitle(nextValue)}
+                            onFocus={() => {
+                                if (screenHeight != { height: keyboardScrollScreenHeight }) setScreenHeight({ height: keyboardScrollScreenHeight });
+                            }}
                         />
                     </Card>
                 </ScrollView>
@@ -71,6 +122,7 @@ const AddBookScreen = ({ navigation }: AddBookScreenProps) => {
     );
 };
 
+// Styles
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -84,7 +136,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'black'
     },
     formContainer: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -94,7 +145,8 @@ const styles = StyleSheet.create({
     },
     card: {
         width: '90%',
-        height: '70%'
+        minHeight: '70%',
+        borderColor: 'transparent'
     },
     footerContainer: {
         padding: 0,
@@ -106,7 +158,10 @@ const styles = StyleSheet.create({
     input: {
         marginVertical: 15,
         backgroundColor: 'transparent',
-        borderColor: '#f4f4f4'
+        borderColor: 'transparent',
+        borderBottomColor: 'darkgrey',
+        borderBottomWidth: 3,
+        borderRadius: 0
     }
 });
 
