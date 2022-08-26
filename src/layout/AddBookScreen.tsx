@@ -26,11 +26,13 @@ const Footer = (props: any) => (
     </Layout>
 );
 
-// ViewModel
+// ViewModel and Data Management
 const viewModelAddBook = new ViewModelAddBook();
 const addBookButton = () => {
-    viewModelAddBook.createNewBook();
-    viewModelAddBook.saveNewBook();
+    console.log(viewModelAddBook.createNewBook());
+    console.log(viewModelAddBook.getBookToAdd());
+
+    //viewModelAddBook.saveNewBook();
 };
 
 // Component
@@ -40,6 +42,20 @@ const AddBookScreen = () => {
     let [isbn, setIsbn] = useState(viewModelAddBook.getIsbn());
     let [author, setAuthor] = useState(viewModelAddBook.getAuthor());
     let [title, setTitle] = useState(viewModelAddBook.getTitle());
+
+    // Input Validation
+    const inputValidation = () => {
+        let isbnRegEx: RegExp = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
+        console.log("ISBN: " + isbnRegEx.test(isbn));
+        let authorRegEx: RegExp = /^([a-zA-Z0-9-_. ]+)([,\.]?)(\s[a-zA-Z0-9-_. ]+)*$/;
+        console.log("Author: " + authorRegEx.test(author));
+        let titleRegEx: RegExp = /\w+/;
+        console.log("Title: " + titleRegEx.test(title));
+
+        viewModelAddBook.setIsbn(isbn);
+        viewModelAddBook.setAuthor(author);
+        viewModelAddBook.setTitle(title);
+    };
 
     // Keyboard and Scroll
     const keyboardScrollScreenHeight = '170%';
@@ -57,9 +73,7 @@ const AddBookScreen = () => {
     // DidMount, DidUpdate, WillUpdate
     useEffect(() => {
         // Data Persistence
-        viewModelAddBook.setIsbn(isbn);
-        viewModelAddBook.setAuthor(author);
-        viewModelAddBook.setTitle(title);
+        inputValidation();
 
         // Keyboard and Scroll
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {

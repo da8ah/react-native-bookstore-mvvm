@@ -8,6 +8,7 @@ export default class ViewModelAddBook {
     private isbn: string = "";
     private author: string = "";
     private title: string = "";
+    private bookToAdd: Book = new Book({ isbn: this.isbn, author: this.author, title: this.title, description: null, price: 0 });;
 
     // Setters
     public setIsbn(isbn: string) {
@@ -16,9 +17,11 @@ export default class ViewModelAddBook {
     }
     public setAuthor(author: string) {
         this.author = author;
+        console.log(this.author);
     }
     public setTitle(title: string) {
         this.title = title;
+        console.log(this.title);
     }
 
     // Getters
@@ -31,17 +34,25 @@ export default class ViewModelAddBook {
     public getTitle(): string {
         return this.title;
     }
+    public getBookToAdd(): Book {
+        return this.bookToAdd;
+    }
+
 
     // Actions
     private addNewBookUseCase = new AddNewBook();
 
-    public createNewBook() {
-        let sampleRegEx: RegExp = /[\d]{10}|[\d]{13}/;
-        console.log("ISBN: " + sampleRegEx.test(this.isbn));
+    public createNewBook(): boolean {
+        try {
+            this.bookToAdd = new Book({ isbn: this.isbn, author: this.author, title: this.title, description: null, price: 0 });
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
     }
 
     public async saveNewBook() {
-        const book = new Book({ isbn: this.isbn, author: this.author, title: this.title, description: null, price: 0 });
-        return await this.addNewBookUseCase.saveNewBook(book, new DataSourceServer());
+        return await this.addNewBookUseCase.saveNewBook(this.bookToAdd, new DataSourceServer());
     }
 }
