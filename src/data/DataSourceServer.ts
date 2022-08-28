@@ -3,12 +3,16 @@ import { IRepository } from "../core/ports/IRepository";
 
 export class DataSourceServer implements IRepository {
 
-    async queryAllBooks(
-        apiString: string = 'https://expressjs-bookstore.herokuapp.com/api/books'
-    ): Promise<Book[] | null> {
+    private apiURL: string = 'https://expressjs-bookstore.herokuapp.com/api/books';
+
+    constructor(apiURL?: string) {
+        if (apiURL) this.apiURL = apiURL;
+    }
+
+    async queryAllBooks(): Promise<Book[] | null> {
         try {
             let data: Book[] = [];
-            data = await fetch(apiString)
+            data = await fetch(this.apiURL)
                 .then(res => res.json())
                 .then(data => {
                     return data.map((item: any) => {
@@ -27,8 +31,31 @@ export class DataSourceServer implements IRepository {
         }
     }
 
-    saveNewBook(book: Book): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async saveNewBook(book: Book): Promise<boolean> {
+        try {
+            let confirmation: boolean = false;
+            let bodyContent = JSON.stringify({
+                isbn: book.getIsbn(),
+                author: book.getAuthor(),
+                title: book.getTitle()
+            });
+
+            confirmation = await fetch(this.apiURL, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: bodyContent
+            })
+                .then(res => {
+                    console.log(res.status);
+                    return (res.status == 200) ? true : false;
+                });
+            return confirmation;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
     }
 
 }
