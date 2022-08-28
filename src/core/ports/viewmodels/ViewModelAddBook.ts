@@ -8,20 +8,22 @@ export default class ViewModelAddBook {
     private isbn: string = "";
     private author: string = "";
     private title: string = "";
-    private bookToAdd: Book = new Book({ isbn: this.isbn, author: this.author, title: this.title, description: null, price: 0 });;
+    private inputsChecked: boolean = false;
+    private bookToAdd: Book = new Book({ isbn: this.isbn, author: this.author, title: this.title, description: null, price: 0 });
+    private bookSaved: boolean = false;
 
     // Setters
     public setIsbn(isbn: string) {
         this.isbn = isbn;
-        console.log(this.isbn);
     }
     public setAuthor(author: string) {
         this.author = author;
-        console.log(this.author);
     }
     public setTitle(title: string) {
         this.title = title;
-        console.log(this.title);
+    }
+    public setInputsCheck(validationStatus: boolean) {
+        this.inputsChecked = validationStatus;
     }
 
     // Getters
@@ -34,18 +36,26 @@ export default class ViewModelAddBook {
     public getTitle(): string {
         return this.title;
     }
+    public getInputsCheckedStatus(): boolean {
+        return this.inputsChecked;
+    }
     public getBookToAdd(): Book {
         return this.bookToAdd;
     }
-
+    public getBookSavedStatus(): boolean {
+        return this.bookSaved;
+    }
 
     // Actions
     private addNewBookUseCase = new AddNewBook();
 
     public createNewBook(): boolean {
         try {
-            this.bookToAdd = new Book({ isbn: this.isbn, author: this.author, title: this.title, description: null, price: 0 });
-            return true;
+            if (this.inputsChecked) {
+                this.bookToAdd = new Book({ isbn: this.isbn, author: this.author, title: this.title, description: null, price: 0 });
+                return true;
+            }
+            return false;
         } catch (error) {
             console.error(error);
             return false;
@@ -53,6 +63,10 @@ export default class ViewModelAddBook {
     }
 
     public async saveNewBook() {
-        return await this.addNewBookUseCase.saveNewBook(this.bookToAdd, new DataSourceServer());
+        if (this.inputsChecked)
+            this.bookSaved = await this.addNewBookUseCase.saveNewBook(
+                this.bookToAdd,
+                new DataSourceServer()
+            );
     }
 }

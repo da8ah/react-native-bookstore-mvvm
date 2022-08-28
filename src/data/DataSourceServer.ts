@@ -34,28 +34,23 @@ export class DataSourceServer implements IRepository {
     async saveNewBook(book: Book): Promise<boolean> {
         try {
             let confirmation: boolean = false;
-            console.log(JSON.stringify(book));
+            let bodyContent = JSON.stringify({
+                isbn: book.getIsbn(),
+                author: book.getAuthor(),
+                title: book.getTitle()
+            });
 
-            /*
             confirmation = await fetch(this.apiURL, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(book)
+                body: bodyContent
             })
-                .then(res => res.json())
-                .then(data => {
-                    return data.map((item: any) => {
-                        const isbn = item.isbn.toString();
-                        const author = item.author.toString();
-                        const title = item.title.toString();
-                        const description = null;
-                        const price = Number.parseFloat((Math.round((Math.random() * 10 + 1)) * 10 + 9.99).toFixed(2));
-                        return new Book({ isbn, author, title, description, price });
-                    });
+                .then(res => {
+                    console.log(res.status);
+                    return (res.status == 200) ? true : false;
                 });
-            */
             return confirmation;
         } catch (error) {
             console.error(error);

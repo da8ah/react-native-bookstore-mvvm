@@ -29,14 +29,18 @@ const Footer = (props: any) => (
 // ViewModel and Data Management
 const viewModelAddBook = new ViewModelAddBook();
 const addBookButton = () => {
-    console.log(viewModelAddBook.createNewBook());
-    console.log(viewModelAddBook.getBookToAdd());
-
-    //viewModelAddBook.saveNewBook();
+    viewModelAddBook.createNewBook();
+    viewModelAddBook.saveNewBook();
+    console.log("Book Saved: " + viewModelAddBook.getBookSavedStatus());
 };
 
 // Component
 const AddBookScreen = () => {
+
+    // Patterns to Check Inputs
+    const isbnRegEx: RegExp = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
+    const authorRegEx: RegExp = /^([a-zA-Z0-9-_. ]+)([,\.]?)(\s[a-zA-Z0-9-_. ]+)*$/;
+    const titleRegEx: RegExp = /\w+/;
 
     // Input Persistence
     let [isbn, setIsbn] = useState(viewModelAddBook.getIsbn());
@@ -45,16 +49,18 @@ const AddBookScreen = () => {
 
     // Input Validation
     const inputValidation = () => {
-        let isbnRegEx: RegExp = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
-        console.log("ISBN: " + isbnRegEx.test(isbn));
-        let authorRegEx: RegExp = /^([a-zA-Z0-9-_. ]+)([,\.]?)(\s[a-zA-Z0-9-_. ]+)*$/;
-        console.log("Author: " + authorRegEx.test(author));
-        let titleRegEx: RegExp = /\w+/;
-        console.log("Title: " + titleRegEx.test(title));
+        let isbnTrim = isbn.trim();
+        let authorTrim = author.trim();
+        let titleTrim = title.trim();
 
-        viewModelAddBook.setIsbn(isbn);
-        viewModelAddBook.setAuthor(author);
-        viewModelAddBook.setTitle(title);
+        viewModelAddBook.setInputsCheck(
+            isbnRegEx.test(isbnTrim) && authorRegEx.test(authorTrim) && titleRegEx.test(titleTrim)
+        );
+        console.log("InputsCheck: " + viewModelAddBook.getInputsCheckedStatus());
+
+        viewModelAddBook.setIsbn(isbnTrim);
+        viewModelAddBook.setAuthor(authorTrim);
+        viewModelAddBook.setTitle(titleTrim);
     };
 
     // Keyboard and Scroll
