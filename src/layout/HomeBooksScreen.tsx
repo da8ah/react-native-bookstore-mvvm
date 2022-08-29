@@ -5,71 +5,10 @@ import { Book } from '../core/entities/Book';
 import { ViewModelHomeBooks } from '../core/ports/viewmodels/ViewModelHomeBook';
 import { HomeBooksScreenProps } from './ScreenTypes';
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    header: {
-        width: '100%',
-        paddingVertical: 20,
-        textAlign: 'center',
-        color: 'white',
-        backgroundColor: 'black'
-    },
-    listContainer: {
-        flex: 1,
-        width: '100%'
-    },
-    contentContainer: {
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        justifyContent: 'space-evenly',
-        alignContent: 'center'
-    },
-    bookLayout: {
-        flexDirection: 'row',
-        paddingHorizontal: 10,
-        paddingVertical: 10
-    },
-    bookInfoLayout: {
-        width: '70%'
-    },
-    bookPriceLayout: {
-        width: '30%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignContent: 'center'
-    },
-    bookAuthorAndIsbnLayout: {
-        flexDirection: 'row'
-    },
-    bookAuthor: {
-        width: '60%'
-    },
-    bookIsbn: {
-        width: '40%',
-        textAlign: 'right',
-        fontSize: 12
-    },
-    bookTitle: {
-        paddingBottom: 4,
-        fontWeight: 'bold',
-        fontStyle: 'italic'
-    },
-    bookPrice: {
-        fontSize: 20,
-        color: 'darkgreen'
-    },
-});
-
-let login: any = () => {
-    console.log("Here goes navigateLogin arrow function!");
-};
+let goToLogin: any;
 
 const renderBookItem = (allBooks: any) => (
-    <Pressable onPress={login}>
+    <Pressable onPress={goToLogin}>
         <Layout style={styles.bookLayout}>
             <Layout style={styles.bookInfoLayout}>
                 <Layout style={styles.bookAuthorAndIsbnLayout}>
@@ -101,6 +40,7 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
     const navigateLogin = () => {
         navigation.navigate('Login');
     };
+    goToLogin = navigateLogin;
 
     const [books, setBooks] = useState<Book[] | null>();
 
@@ -133,13 +73,18 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
                         <Button style={{ width: '50%' }} onPress={comprobarData}>Data</Button>
                         */}
                         <Text category='h3' status='primary' style={styles.header}>Welcome to BOOKSTORE!</Text>
-                        <List
-                            style={styles.listContainer}
-                            contentContainerStyle={styles.contentContainer}
-                            data={books}
-                            renderItem={renderBookItem}
-                            listKey={'books'}
-                        />
+                        {!viewModelHomeBooks.isLoading() ?
+                            (
+                                <ActivityIndicator style={styles.listContainer} />
+                            ) : (
+                                <List
+                                    style={styles.listContainer}
+                                    contentContainerStyle={styles.contentContainer}
+                                    data={books}
+                                    renderItem={renderBookItem}
+                                    listKey={'books'}
+                                />
+                            )}
                     </Layout>
                 )
             }
@@ -147,5 +92,65 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
     );
 
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    header: {
+        width: '100%',
+        paddingVertical: 20,
+        textAlign: 'center',
+        color: 'white',
+        backgroundColor: 'black'
+    },
+    listContainer: {
+        flex: 1,
+        width: '100%'
+    },
+    contentContainer: {
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        justifyContent: 'space-evenly',
+        alignContent: 'center'
+    },
+    bookLayout: {
+        flexDirection: 'row',
+        marginVertical: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 15
+    },
+    bookInfoLayout: {
+        width: '70%'
+    },
+    bookPriceLayout: {
+        width: '30%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignContent: 'center'
+    },
+    bookAuthorAndIsbnLayout: {
+        flexDirection: 'row'
+    },
+    bookAuthor: {
+        width: '60%'
+    },
+    bookIsbn: {
+        width: '40%',
+        textAlign: 'right',
+        fontSize: 12
+    },
+    bookTitle: {
+        paddingBottom: 4,
+        fontWeight: 'bold',
+        fontStyle: 'italic'
+    },
+    bookPrice: {
+        fontSize: 20,
+        color: 'darkgreen'
+    },
+});
 
 export default HomeBooksScreen;

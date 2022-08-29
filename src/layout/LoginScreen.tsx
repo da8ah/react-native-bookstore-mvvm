@@ -1,7 +1,9 @@
 import { Button, Card, Icon, Input, Layout, Text } from '@ui-kitten/components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import ViewModelLogin from '../core/ports/viewmodels/ViewModelLogin';
 import { AddBookScreenProps, LoginScreenProps } from './ScreenTypes';
+
 
 const AlertIcon = (props: any) => (
     <Icon {...props} name='alert-circle-outline' />
@@ -18,20 +20,28 @@ const Footer = (props: any) => (
         <Button
             style={styles.footerControl}
             size='large'
-            onPress={props.navigateCart}
+            onPress={login}
         >
             Login
         </Button>
     </Layout>
 );
 
-const LoginScreen = ({ navigation }: LoginScreenProps) => {
+const viewModelLogin = new ViewModelLogin();
+let login: any;
+
+const LoginScreen = ({ navigation }: any) => {
 
     const navigateCart = () => {
-        navigation.navigate('Cart');
+        viewModelLogin.login({ email, password });
+        if (viewModelLogin.isLogged())
+            navigation.navigate('Cart', { token: viewModelLogin.getAccessToken() });
     };
 
-    const [value, setValue] = useState('');
+    login = navigateCart;
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [secureTextEntry, setSecureTextEntry] = useState(true);
 
     const toggleSecureEntry = () => {
@@ -48,27 +58,41 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         return (
             <Layout style={styles.captionContainer}>
                 {AlertIcon(styles.captionIcon)}
-                <Text style={styles.captionText}>Should contain at least 8 symbols</Text>
+                <Text style={styles.captionText}>Credentials hard-coded to test only</Text>
             </Layout>
         )
     }
 
+    useEffect(() => {
+        setEmail('tiber@email.com');
+        setPassword('tiber');
+    });
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Layout style={styles.container}>
-                <Card style={styles.card} header={Header} footer={Footer(navigateCart)}>
+                <Card style={styles.card} header={Header} footer={Footer}>
                     <Input
+                        disabled={true}
+                        editable={false}
+                        value={email}
                         label='Email'
                         placeholder='email'
+                        style={styles.input}
+                        selectionColor='royalblue'
                     />
                     <Input
-                        value={value}
+                        disabled={true}
+                        editable={false}
+                        value={password}
                         label='Password'
                         placeholder='password'
+                        style={styles.input}
+                        selectionColor='royalblue'
                         caption={renderCaption}
                         accessoryRight={renderIcon}
                         secureTextEntry={secureTextEntry}
-                        onChangeText={nextValue => setValue(nextValue)}
+                        onChangeText={nextValue => setPassword(nextValue)}
                     />
                 </Card>
             </Layout>
@@ -92,6 +116,9 @@ const styles = StyleSheet.create({
     footerContainer: {
     },
     footerControl: {
+    },
+    input: {
+        marginVertical: 15
     },
     captionContainer: {
         display: 'flex',

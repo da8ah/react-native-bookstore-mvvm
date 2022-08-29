@@ -48,8 +48,8 @@ export class DataSourceServer implements IRepository {
                 body: bodyContent
             })
                 .then(res => {
-                    console.log(res.status);
-                    return (res.status == 200) ? true : false;
+                    console.log(res.ok);
+                    return res.ok;
                 });
             return confirmation;
         } catch (error) {

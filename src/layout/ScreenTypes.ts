@@ -1,3 +1,4 @@
+import { RouteProp } from "@react-navigation/native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 
 type RootStackParamList = {
@@ -6,6 +7,10 @@ type RootStackParamList = {
     Login: undefined,
     Cart: undefined,
     Payment: undefined
+}
+
+type CartScreenParamList = {
+    props: { token: string }
 }
 
 export type HomeBooksScreenProps = NativeStackScreenProps<RootStackParamList, 'Books'>
