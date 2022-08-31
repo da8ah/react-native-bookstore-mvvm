@@ -1,9 +1,10 @@
-import { Book } from "../core/entities/Book";
-import { IRepository } from "../core/ports/IRepository";
+import { Book } from "../../core/entities/Book";
+import { IRepository } from "../../core/ports/IRepository";
+import config from "../config";
 
 export class DataSourceServer implements IRepository {
 
-    private apiURL: string = 'https://expressjs-bookstore.herokuapp.com/api/books';
+    private apiURL: string = config.URL.REPOSITORY;
 
     constructor(apiURL?: string) {
         if (apiURL) this.apiURL = apiURL;
