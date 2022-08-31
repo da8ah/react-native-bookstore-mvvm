@@ -2,10 +2,8 @@ import { Divider, Layout, List, Text, Button } from '@ui-kitten/components';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, SafeAreaView, StyleSheet } from 'react-native';
 import { Book } from '../core/entities/Book';
-import { ViewModelHomeBooks } from '../core/ports/viewmodels/ViewModelHomeBook';
+import { ViewModelHomeBooks } from '../core/ports/viewmodels/ViewModelHomeBooks';
 import { HomeBooksScreenProps } from './ScreenTypes';
-
-let goToLogin: any;
 
 const renderBookItem = (allBooks: any) => (
     <Pressable onPress={goToLogin}>
@@ -33,19 +31,20 @@ const renderBookItem = (allBooks: any) => (
     </Pressable>
 );
 
+let goToLogin: any;
 const viewModelHomeBooks = new ViewModelHomeBooks();
 
 const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
 
     const navigateLogin = () => {
-        navigation.navigate('Login');
+        if (books) navigation.navigate('Login', { books });
     };
     goToLogin = navigateLogin;
 
     const [books, setBooks] = useState<Book[] | null>();
 
-    const comprobarData = () => {
-        viewModelHomeBooks.getDataFromServer();
+    const comprobarData = async () => {
+        await viewModelHomeBooks.getDataFromServer();
         setBooks(viewModelHomeBooks.getBooksStored());
     };
 

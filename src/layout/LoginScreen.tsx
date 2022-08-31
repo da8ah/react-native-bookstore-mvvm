@@ -2,8 +2,7 @@ import { Button, Card, Icon, Input, Layout, Text } from '@ui-kitten/components';
 import { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import ViewModelLogin from '../core/ports/viewmodels/ViewModelLogin';
-import { AddBookScreenProps, LoginScreenProps } from './ScreenTypes';
-
+import { LoginScreenProps } from './ScreenTypes';
 
 const AlertIcon = (props: any) => (
     <Icon {...props} name='alert-circle-outline' />
@@ -30,12 +29,14 @@ const Footer = (props: any) => (
 const viewModelLogin = new ViewModelLogin();
 let login: any;
 
-const LoginScreen = ({ navigation }: any) => {
+const LoginScreen = ({ route, navigation }: LoginScreenProps) => {
 
-    const navigateCart = () => {
-        viewModelLogin.login({ email, password });
-        if (viewModelLogin.isLogged())
-            navigation.navigate('Cart', { token: viewModelLogin.getAccessToken() });
+    const navigateCart = async () => {
+        await viewModelLogin.login({ email, password });
+        if (viewModelLogin.isLogged()) {
+            const token = viewModelLogin.getAccessToken();
+            if (token) navigation.navigate('Cart', { token, books: route.params.books });
+        } else console.log("No token provided");
     };
 
     login = navigateCart;

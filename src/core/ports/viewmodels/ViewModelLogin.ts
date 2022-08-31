@@ -1,4 +1,4 @@
-import AuthenticationService from "../../../auth/AuthenticationService";
+import AuthenticationService from "../../../services/auth/AuthenticationService";
 import BuyBooks from "../../usecases/BuyBooks";
 import IAuthentication from "../IAuthentication";
 
@@ -21,9 +21,7 @@ export default class ViewModelLogin {
         this.logged = false;
         (!this.authenticationService.getToken()) ? (
             this.logged = await this.BuyBooksUseCase.signin(credentials, this.authenticationService)
-        ) : (
-            this.logged = true
-        );
+        ) : (this.logged = true)
     }
 
 }

@@ -1,4 +1,4 @@
-import { DataSourceServer } from "../../../data/DataSourceServer";
+import { DataSourceServer } from "../../../services/data/DataSourceServer";
 import { Book } from "../../entities/Book";
 import { AddNewBook } from "../../usecases/AddNewBook";
 

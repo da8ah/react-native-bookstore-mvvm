@@ -1,5 +1,5 @@
 import { DisplayBooks } from '../../usecases/DisplayBooks';
-import { DataSourceServer } from '../../../data/DataSourceServer';
+import { DataSourceServer } from '../../../services/data/DataSourceServer';
 import { IRepository } from '../IRepository';
 import { Book } from '../../entities/Book';
 
