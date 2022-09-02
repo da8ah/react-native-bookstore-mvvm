@@ -20,7 +20,7 @@ export default class PaymentStripeService implements IPayment {
         return priceRegEx.test(priceTrim);
     }
 
-    public async generatePaymentIntent(paymentDetails: { accessToken: string, price: string }): Promise<boolean> {
+    public async generatePayment(paymentDetails: { accessToken: string, price: string }): Promise<boolean> {
         try {
             let confirmation: boolean = false;
             if (!this.checkPaymentFormat(paymentDetails.price)) return false;

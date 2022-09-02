@@ -7,10 +7,12 @@ export default class BuyBooks {
         return await iAuthentication.signin(credentials);
     }
 
-    public async checkout(paymentDetails: { accessToken: string, price: string }, iPayment: IPayment):
-        Promise<{ publishableKey: string, clientSecret: string }> {
-        await iPayment.generatePaymentIntent(paymentDetails);
-        return iPayment.getIntent();
+    public async generatePayment(paymentDetails: { accessToken: string, price: string }, iPayment: IPayment):
+        Promise<{ publishableKey: string, clientSecret: string } | null> {
+        await iPayment.generatePayment(paymentDetails);
+        const paymentGenerated = iPayment.getIntent();
+        if (paymentGenerated) return paymentGenerated;
+        else return null;
     }
 
 }

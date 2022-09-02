@@ -42,7 +42,6 @@ const CartScreen = ({ route, navigation }: CartScreenProps) => {
     const priceCalculation = (books: Book[]): string => {
         return books.reduce((accumulator, book) => accumulator + book.getPrice(), 0).toFixed(2);
     }
-
     let total: string = priceCalculation(route.params.books);
 
     return (
