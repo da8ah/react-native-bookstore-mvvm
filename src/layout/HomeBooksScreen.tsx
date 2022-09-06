@@ -43,15 +43,10 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
 
     const [books, setBooks] = useState<Book[] | null>();
 
-    const comprobarData = async () => {
-        await viewModelHomeBooks.getDataFromServer();
-        setBooks(viewModelHomeBooks.getBooksStored());
-    };
-
     useEffect(() => {
-        setTimeout(() => {
+        setTimeout(async () => {
             if (!viewModelHomeBooks.isLoading()) {
-                viewModelHomeBooks.getDataFromServer();
+                await viewModelHomeBooks.getDataFromServer();
                 setBooks(viewModelHomeBooks.getBooksStored());
             }
         }, 2000);
@@ -67,12 +62,8 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
                     </Layout>
                 ) : (
                     <Layout style={styles.container}>
-                        {/* 
-                        <Button style={{ width: '50%' }} onPress={navigateLogin}>Login</Button>
-                        <Button style={{ width: '50%' }} onPress={comprobarData}>Data</Button>
-                        */}
                         <Text category='h3' status='primary' style={styles.header}>Welcome to BOOKSTORE!</Text>
-                        {!viewModelHomeBooks.isLoading() ?
+                        {viewModelHomeBooks.isLoading() ?
                             (
                                 <ActivityIndicator style={styles.listContainer} />
                             ) : (

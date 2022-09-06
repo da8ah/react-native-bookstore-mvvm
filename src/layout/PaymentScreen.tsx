@@ -1,4 +1,4 @@
-import { CardField, CardFieldInput, CardForm, initPaymentSheet, PaymentMethodCreateParams, presentPaymentSheet, StripeProvider, useConfirmPayment, useStripe } from '@stripe/stripe-react-native';
+import { CardForm, PaymentMethodCreateParams, StripeProvider, useConfirmPayment } from '@stripe/stripe-react-native';
 import { Button, Card, Divider, Layout, Modal, Text } from '@ui-kitten/components';
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, SafeAreaView, StyleSheet } from 'react-native';
@@ -9,7 +9,7 @@ const PaymentScreen = ({ route, navigation }: PaymentScreenProps) => {
 
     const [visible, setVisible] = useState(false);
     const [publishableKey, setPublishableKey] = useState<string>('');
-    const { confirmPayment, loading } = useConfirmPayment();
+    const { confirmPayment } = useConfirmPayment();
     const viewModelPayment = new ViewModelPayment(route.params.token, route.params.price);
 
     const getPublishableKey = async () => {
@@ -19,14 +19,6 @@ const PaymentScreen = ({ route, navigation }: PaymentScreenProps) => {
             if (payment) setPublishableKey(payment.publishableKey);
         }
     }
-
-    const openPaymentSheet = async () => {
-        console.log("Opening payment Sheet!");
-        const { error } = await presentPaymentSheet();
-
-        if (error) console.error(`Error Code: ${error.code}`, error.message);
-        else console.log("Success! Your payment has been confirmed!");
-    };
 
     const executePayment = async () => {
         if (!viewModelPayment.isGenerated()) {
@@ -39,7 +31,7 @@ const PaymentScreen = ({ route, navigation }: PaymentScreenProps) => {
         const payment = viewModelPayment.getPaymentID();
         if (payment) {
             const billingDetails: PaymentMethodCreateParams.BillingDetails = {
-                email: 'email@stripe.com',
+                email: 'tiber@email.com',
                 // phone: '',
                 // addressCity: '',
                 // addressCountry: '',
@@ -61,9 +53,10 @@ const PaymentScreen = ({ route, navigation }: PaymentScreenProps) => {
             } else if (paymentIntent) {
                 Alert.alert(
                     'Success',
-                    `The payment was confirmed successfully! currency: ${paymentIntent.currency}`
+                    `Payment was confirmed successfully!\nCurrency: $ ${route.params.price} ${paymentIntent.currency.toUpperCase()}\nThank you, have a great day!`
                 );
                 console.log('Success from promise', paymentIntent);
+                navigation.navigate('Books');
             }
         }
     }
@@ -104,7 +97,7 @@ const PaymentScreen = ({ route, navigation }: PaymentScreenProps) => {
                                 backdropStyle={styles.backdrop}
                                 onBackdropPress={() => setVisible(false)}>
                                 <Card disabled={true}>
-                                    <Text style={{ marginBottom: 15 }}>Are you sure you want to Continue? 🔔</Text>
+                                    <Text style={{ marginBottom: 25 }}>Press ACCEPT to proceed with Payment 💲</Text>
                                     <Button status={'success'} onPress={() => {
                                         setVisible(false);
                                         executePayment();
