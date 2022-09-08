@@ -30,35 +30,41 @@ const BottomTabBar = ({ navigation, state }: BottomTabBarProps) => (
         style={{ height: '7%' }}
         indicatorStyle={{ backgroundColor: 'black', borderWidth: 0.1 }}
         selectedIndex={state.index}
-        onSelect={index => navigation.navigate(state.routeNames[index])}>
-        <BottomNavigationTab title={TitleHome} icon={HomeIcon({ fill: 'black' })} />
+        onSelect={index => navigation.navigate(state.routeNames[index])}
+    >
+        <BottomNavigationTab title={TitleHome} icon={HomeIcon({ fill: 'black' })}
+            onPressIn={() => {
+                let amIAtBooks = (!navigation.getState().routes[0].state?.routes[1]?.name) ? true : false;
+                if (!amIAtBooks) {
+                    navigation.navigate('Books');
+                };
+            }} />
         <BottomNavigationTab title={TitleAdd} icon={AddIcon({ fill: 'black' })} />
     </BottomNavigation>
 );
 
 const Tab = createBottomTabNavigator();
 
-function MainBottomTabNavigator() {
-    return (
-        <Tab.Navigator
-            tabBar={props => <BottomTabBar {...props} />}
-            screenOptions={{ headerShown: false }}
-        >
-            <Tab.Screen name="Home" component={HomeToPaymentNavigator} />
-            <Tab.Screen name="New" component={AddBookScreen} options={{ headerShown: true }} />
-        </Tab.Navigator >
-    );
-}
+const MainBottomTabNavigator = () => (
+    <Tab.Navigator
+        id='TabNav'
+        tabBar={props => <BottomTabBar {...props} />}
+        screenOptions={{ headerShown: false }}
+    >
+        <Tab.Screen name="Home" component={HomeToPaymentNavigator} />
+        <Tab.Screen name="New" component={AddBookScreen} options={{ headerShown: true }} />
+    </Tab.Navigator >
+);
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
 const HomeToPaymentNavigator = () => (
-    <Navigator>
+    <Navigator initialRouteName='Books'>
         <Screen name='Books' component={HomeBooksScreen} />
         <Screen name='Login' component={LoginScreen} />
         <Screen name='Cart' component={CartScreen} />
         <Screen name='Payment' component={PaymentScreen} />
-    </Navigator>
+    </Navigator >
 );
 
 const AppNavigator = () => (
