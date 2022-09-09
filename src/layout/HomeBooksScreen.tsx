@@ -73,6 +73,9 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
                                     data={books}
                                     renderItem={renderBookItem}
                                     listKey={'books'}
+                                    // refreshControl
+                                    // refreshing={true}
+                                    // onRefresh={() => console.log("Scrolled")}
                                 />
                             )}
                     </Layout>

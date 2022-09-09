@@ -48,10 +48,7 @@ export class DataSourceServer implements IRepository {
                 },
                 body: bodyContent
             })
-                .then(res => {
-                    console.log(res.ok);
-                    return res.ok;
-                });
+                .then(res => res.ok);
             return confirmation;
         } catch (error) {
             console.error(error);

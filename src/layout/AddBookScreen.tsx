@@ -1,6 +1,6 @@
 import { Button, Card, Icon, Input, Layout, Text } from '@ui-kitten/components';
 import { useEffect, useRef, useState } from 'react';
-import { Keyboard, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { Alert, Keyboard, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import ViewModelAddBook from '../core/ports/viewmodels/ViewModelAddBook';
 
 // Form Card Elements
@@ -28,11 +28,7 @@ const Footer = (props: any) => (
 
 // ViewModel and Data Management
 const viewModelAddBook = new ViewModelAddBook();
-const addBookButton = () => {
-    viewModelAddBook.createNewBook();
-    viewModelAddBook.saveNewBook();
-    console.log("Book Saved: " + viewModelAddBook.getBookSavedStatus());
-};
+let addBookButton: any;
 
 // Component
 const AddBookScreen = () => {
@@ -56,16 +52,36 @@ const AddBookScreen = () => {
         viewModelAddBook.setInputsCheck(
             isbnRegEx.test(isbnTrim) && authorRegEx.test(authorTrim) && titleRegEx.test(titleTrim)
         );
-        console.log("InputsCheck: " + viewModelAddBook.getInputsCheckedStatus());
 
         viewModelAddBook.setIsbn(isbnTrim);
         viewModelAddBook.setAuthor(authorTrim);
         viewModelAddBook.setTitle(titleTrim);
     };
 
+    // When Press Add Button
+    const onAddBookButton = async () => {
+        Keyboard.dismiss();
+        console.log("InputCheck: " + viewModelAddBook.getInputsCheckedStatus());
+        viewModelAddBook.createNewBook();
+        await viewModelAddBook.saveNewBook();
+        if (viewModelAddBook.getBookSavedStatus()) {
+            Alert.alert("Notification 🔔", "Book Saved!");
+            viewModelAddBook.setIsbn("");
+            viewModelAddBook.setAuthor("");
+            viewModelAddBook.setTitle("");
+            setIsbn("");
+            setAuthor("");
+            setTitle("");
+            return;
+        }
+        Alert.alert("Error ❌", "Error while saving Book!\n\nPlease check Book's details again or contact Support for further help.");
+    };
+    addBookButton = onAddBookButton;
+
     // Keyboard and Scroll
+    const defaultScrollScreenHeight = '100%';
     const keyboardScrollScreenHeight = '170%';
-    let [screenHeight, setScreenHeight] = useState({ height: '100%' });
+    let [screenHeight, setScreenHeight] = useState(defaultScrollScreenHeight);
     let isbnInputRef = useRef<Input>();
     let authorInputRef = useRef<Input>();
     let titleInputRef = useRef<Input>();
@@ -73,7 +89,7 @@ const AddBookScreen = () => {
     const setDefaultScrollHeight = () => {
         if (!isbnInputRef.current?.isFocused() &&
             !authorInputRef.current?.isFocused() &&
-            !titleInputRef.current?.isFocused()) { setScreenHeight({ height: '100%' }) };
+            !titleInputRef.current?.isFocused()) { setScreenHeight(defaultScrollScreenHeight) };
     }
 
     // DidMount, DidUpdate, WillUpdate
@@ -83,7 +99,7 @@ const AddBookScreen = () => {
 
         // Keyboard and Scroll
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-            setScreenHeight({ height: '100%' });
+            setScreenHeight(defaultScrollScreenHeight);
         });
 
         return () => {
@@ -95,7 +111,7 @@ const AddBookScreen = () => {
         <SafeAreaView style={{ flex: 1 }}>
             <Layout style={styles.container}>
                 <Text category='h3' status='primary' style={styles.header}>Welcome to BOOKSTORE!</Text>
-                <ScrollView contentContainerStyle={[styles.formContainer, screenHeight]} keyboardShouldPersistTaps='handled'>
+                <ScrollView contentContainerStyle={[styles.formContainer, { height: screenHeight }]} keyboardShouldPersistTaps='handled'>
                     <Card
                         style={styles.card}
                         header={Header}
@@ -110,7 +126,7 @@ const AddBookScreen = () => {
                             value={isbn}
                             onChangeText={nextValue => setIsbn(nextValue)}
                             onFocus={() => {
-                                if (screenHeight != { height: keyboardScrollScreenHeight }) setScreenHeight({ height: keyboardScrollScreenHeight });
+                                if (screenHeight != keyboardScrollScreenHeight) setScreenHeight(keyboardScrollScreenHeight);
                             }}
                         />
                         <Input
@@ -121,7 +137,7 @@ const AddBookScreen = () => {
                             value={author}
                             onChangeText={nextValue => setAuthor(nextValue)}
                             onFocus={() => {
-                                if (screenHeight != { height: keyboardScrollScreenHeight }) setScreenHeight({ height: keyboardScrollScreenHeight });
+                                if (screenHeight != keyboardScrollScreenHeight) setScreenHeight(keyboardScrollScreenHeight);
                             }}
                         />
                         <Input
@@ -132,7 +148,7 @@ const AddBookScreen = () => {
                             value={title}
                             onChangeText={nextValue => setTitle(nextValue)}
                             onFocus={() => {
-                                if (screenHeight != { height: keyboardScrollScreenHeight }) setScreenHeight({ height: keyboardScrollScreenHeight });
+                                if (screenHeight != keyboardScrollScreenHeight) setScreenHeight(keyboardScrollScreenHeight);
                             }}
                         />
                     </Card>

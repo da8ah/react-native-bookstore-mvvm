@@ -25,7 +25,7 @@ const TitleAdd = () => (
     <Text style={{ color: 'black', fontSize: 10 }}>Add</Text>
 );
 
-const BottomTabBar = ({ navigation, state }: BottomTabBarProps) => (
+const BottomTabBarUiKitten = ({ navigation, state }: BottomTabBarProps) => (
     <BottomNavigation
         style={{ height: '7%' }}
         indicatorStyle={{ backgroundColor: 'black', borderWidth: 0.1 }}
@@ -47,18 +47,17 @@ const Tab = createBottomTabNavigator();
 
 const MainBottomTabNavigator = () => (
     <Tab.Navigator
-        id='TabNav'
-        tabBar={props => <BottomTabBar {...props} />}
+        tabBar={props => <BottomTabBarUiKitten {...props} />}
         screenOptions={{ headerShown: false }}
     >
-        <Tab.Screen name="Home" component={HomeToPaymentNavigator} />
+        <Tab.Screen name="Home" component={HomeStackNavigator} />
         <Tab.Screen name="New" component={AddBookScreen} options={{ headerShown: true }} />
     </Tab.Navigator >
 );
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
-const HomeToPaymentNavigator = () => (
+const HomeStackNavigator = () => (
     <Navigator initialRouteName='Books'>
         <Screen name='Books' component={HomeBooksScreen} />
         <Screen name='Login' component={LoginScreen} />
