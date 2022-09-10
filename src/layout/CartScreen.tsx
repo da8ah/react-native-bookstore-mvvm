@@ -1,4 +1,4 @@
-import { Button, Card, Layout, List, Text } from '@ui-kitten/components';
+import { Button, Card, Divider, Layout, List, Text } from '@ui-kitten/components';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { Book } from '../core/entities/Book';
 import { CartScreenProps } from './ScreenTypes';
@@ -49,19 +49,25 @@ const CartScreen = ({ route, navigation }: CartScreenProps) => {
             <Layout style={styles.container}>
                 <Card
                     style={styles.card}
+                    disabled={true}
+                    focusable={false}
                     header={Header}
                     footer={Footer}
                 >
-                    <List
-                        style={styles.listContainer}
-                        contentContainerStyle={styles.contentContainer}
-                        data={route.params.books}
-                        renderItem={renderBookItem}
-                        listKey={'books'}
-                    />
-                    <Layout style={styles.total}>
-                        <Text style={[styles.bookTitle, { width: '80%', fontSize: 24, fontStyle: 'normal', textAlign: 'right' }]}>Total: </Text>
-                        <Text style={[styles.bookPrice, { color: 'darkred', fontSize: 18, fontStyle: 'italic', fontWeight: 'bold', textAlign: 'right' }]}>$ {total}</Text>
+                    <Layout style={styles.cardContent}>
+                        <List
+                            style={styles.listContainer}
+                            contentContainerStyle={styles.listContentContainer}
+                            ItemSeparatorComponent={Divider}
+                            data={route.params.books}
+                            renderItem={renderBookItem}
+                            listKey={'books-cart'}
+                        />
+                        <Divider />
+                        <Layout style={styles.total}>
+                            <Text style={[styles.bookTitle, { width: '80%', fontSize: 24, fontStyle: 'normal', textAlign: 'right' }]}>Total: </Text>
+                            <Text style={[styles.bookPrice, { color: 'darkred', fontSize: 18, fontStyle: 'italic', fontWeight: 'bold', textAlign: 'right' }]}>$ {total}</Text>
+                        </Layout>
                     </Layout>
                 </Card>
             </Layout>
@@ -76,27 +82,32 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     card: {
+        flex: 1,
         width: '100%',
-        minHeight: '70%',
-        borderColor: 'transparent'
+        borderColor: 'transparent',
+        alignContent: 'center'
+    },
+    cardContent: {
+        marginHorizontal: -20,
+        marginVertical: -16,
+        marginBottom: -200
     },
     listContainer: {
+        maxHeight: '75%',
         backgroundColor: 'transparent'
     },
-    contentContainer: {
+    listContentContainer: {
         justifyContent: 'space-evenly',
         alignContent: 'center'
     },
     bookLayout: {
         height: 80,
         flexDirection: 'row',
-        marginVertical: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f4f4f4',
-        borderRadius: 10
+        borderRadius: 10,
     },
     bookTitle: {
         width: '50%',
+        paddingLeft: 5,
         textAlignVertical: 'center',
         fontWeight: 'bold',
         fontStyle: 'italic'
@@ -115,13 +126,15 @@ const styles = StyleSheet.create({
     total: {
         height: 80,
         flexDirection: 'row',
+        paddingRight: 25,
         borderRadius: 10
     },
     paymentLayout: {
+        maxHeight: 80,
         alignItems: 'center'
     },
     paymentButton: {
-        marginTop: 30,
+        marginVertical: 10,
         width: '90%',
         backgroundColor: 'darkred',
         borderColor: 'white'
