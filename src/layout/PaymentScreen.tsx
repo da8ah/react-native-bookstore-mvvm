@@ -1,4 +1,4 @@
-import { CardForm, PaymentMethodCreateParams, StripeProvider, useConfirmPayment } from '@stripe/stripe-react-native';
+import { CardForm, CardFormView, PaymentMethodCreateParams, StripeProvider, useConfirmPayment } from '@stripe/stripe-react-native';
 import { Button, Card, Divider, Layout, Modal, Text } from '@ui-kitten/components';
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, SafeAreaView, StyleSheet } from 'react-native';
@@ -7,8 +7,9 @@ import { PaymentScreenProps } from './ScreenTypes';
 
 const PaymentScreen = ({ route, navigation }: PaymentScreenProps) => {
 
-    const [visible, setVisible] = useState(false);
+    const [modalVisibility, setModalVisibility] = useState(false);
     const [publishableKey, setPublishableKey] = useState<string>('');
+    const [confirmDisabled, setConfirmDisabledState] = useState<boolean>(true);
     const { confirmPayment } = useConfirmPayment();
     const viewModelPayment = new ViewModelPayment(route.params.token, route.params.price);
 
@@ -20,13 +21,20 @@ const PaymentScreen = ({ route, navigation }: PaymentScreenProps) => {
         }
     }
 
+    const validateCardInputs = (cardDetails: CardFormView.Details) => {
+        const postalCode = cardDetails.postalCode;
+        const postalCodeRegEx: RegExp = /^\d{6}$/;
+        if (postalCode) return postalCodeRegEx.test(postalCode);
+        else return false;
+    }
+
     const executePayment = async () => {
         if (!viewModelPayment.isGenerated()) {
-            console.log("No Payment Generated!");
+            Alert.alert("Error ❌", "No Payment Generated!\n\nPlease check Book's details again or contact Support for further help.");
             return
         }
 
-        console.log("Payment in Progress!");
+        Alert.alert("Status 🔔", "Payment in Progress!");
 
         const payment = viewModelPayment.getPaymentID();
         if (payment) {
@@ -55,7 +63,8 @@ const PaymentScreen = ({ route, navigation }: PaymentScreenProps) => {
                     'Success',
                     `Payment was confirmed successfully!\nCurrency: $ ${route.params.price} ${paymentIntent.currency.toUpperCase()}\nThank you, have a great day!`
                 );
-                console.log('Success from promise', paymentIntent);
+                console.log('Status: ' + paymentIntent.status);
+                setModalVisibility(false);
                 navigation.navigate('Books');
             }
         }
@@ -85,21 +94,23 @@ const PaymentScreen = ({ route, navigation }: PaymentScreenProps) => {
                             style={styles.paymentCardForm}
                             cardStyle={styles.paymentCardContent}
                             onFormComplete={(cardDetails) => {
-                                console.log(cardDetails);
+                                const completed = cardDetails.complete;
+                                if (completed && validateCardInputs(cardDetails)) setConfirmDisabledState(false);
+                                else setConfirmDisabledState(true);
                             }}
                         />
                         <Layout style={{ alignItems: 'center' }}>
-                            <Button style={{ width: '90%' }} status={'warning'} onPress={() => setVisible(true)}>
+                            <Button style={{ width: '90%' }} status={'warning'} disabled={confirmDisabled} onPress={() => setModalVisibility(true)}>
                                 CONFIRM PAYMENT
                             </Button>
                             <Modal
-                                visible={visible}
+                                visible={modalVisibility}
                                 backdropStyle={styles.backdrop}
-                                onBackdropPress={() => setVisible(false)}>
+                                onBackdropPress={() => setModalVisibility(false)}>
                                 <Card disabled={true}>
                                     <Text style={{ marginBottom: 25 }}>Press ACCEPT to proceed with Payment 💲</Text>
                                     <Button status={'success'} onPress={() => {
-                                        setVisible(false);
+                                        setModalVisibility(false);
                                         executePayment();
                                     }}>
                                         ACCEPT
