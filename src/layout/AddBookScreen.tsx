@@ -3,10 +3,22 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, Keyboard, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import ViewModelAddBook from '../core/ports/viewmodels/ViewModelAddBook';
 
+const clearIcon = (props: any) => (
+    <Icon {...props} name='trash-2' />
+);
+
 // Form Card Elements
 const Header = (props: any) => (
     <Layout {...props} style={[props.style, styles.topContainer]}>
-        <Text category='h6'>New Book</Text>
+        <Text category='h6' style={{ width: '80%' }}>New Book</Text>
+        <Button
+            accessoryLeft={clearIcon}
+            appearance='outline'
+            status='basic'
+            style={{ width: '15%' }}
+            size='large'
+            onPress={clearInputFields}
+        ></Button>
     </Layout>
 );
 
@@ -29,6 +41,7 @@ const Footer = (props: any) => (
 // ViewModel and Data Management
 const viewModelAddBook = new ViewModelAddBook();
 let addBookButton: any;
+let clearInputFields: any;
 
 // Component
 const AddBookScreen = () => {
@@ -58,20 +71,26 @@ const AddBookScreen = () => {
         viewModelAddBook.setTitle(titleTrim);
     };
 
+    // Clear Inputs
+    const clearInputs = () => {
+        viewModelAddBook.setIsbn("");
+        viewModelAddBook.setAuthor("");
+        viewModelAddBook.setTitle("");
+        setIsbn("");
+        setAuthor("");
+        setTitle("");
+    }
+    clearInputFields = clearInputs;
+
     // When Press Add Button
     const onAddBookButton = async () => {
         Keyboard.dismiss();
-        console.log("InputCheck: " + viewModelAddBook.getInputsCheckedStatus());
+        console.log("areInputsValid: " + viewModelAddBook.getInputsCheckedStatus());
         viewModelAddBook.createNewBook();
         await viewModelAddBook.saveNewBook();
         if (viewModelAddBook.getBookSavedStatus()) {
             Alert.alert("Notification 🔔", "Book Saved!");
-            viewModelAddBook.setIsbn("");
-            viewModelAddBook.setAuthor("");
-            viewModelAddBook.setTitle("");
-            setIsbn("");
-            setAuthor("");
-            setTitle("");
+            clearInputs();
             return;
         }
         Alert.alert("Error ❌", "Error while saving Book!\n\nPlease check Book's details again or contact Support for further help.");
@@ -177,7 +196,9 @@ const styles = StyleSheet.create({
     },
     topContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#f4f4f4'
     },
     card: {
         width: '90%',
