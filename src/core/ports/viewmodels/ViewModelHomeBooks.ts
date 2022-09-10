@@ -19,7 +19,6 @@ export class ViewModelHomeBooks {
     }
 
     public isLoading(): boolean {
-        console.log(this.loading);
         return this.loading;
     }
 

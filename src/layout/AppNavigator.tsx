@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { BottomTabBarProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -25,23 +25,32 @@ const TitleAdd = () => (
     <Text style={{ color: 'black', fontSize: 10 }}>Add</Text>
 );
 
-const BottomTabBarUiKitten = ({ navigation, state }: BottomTabBarProps) => (
-    <BottomNavigation
-        style={{ height: '7%' }}
-        indicatorStyle={{ backgroundColor: 'black', borderWidth: 0.1 }}
-        selectedIndex={state.index}
-        onSelect={index => navigation.navigate(state.routeNames[index])}
-    >
-        <BottomNavigationTab title={TitleHome} icon={HomeIcon({ fill: 'black' })}
-            onPressIn={() => {
-                let amIAtBooks = (!navigation.getState().routes[0].state?.routes[1]?.name) ? true : false;
-                if (!amIAtBooks) {
-                    navigation.navigate('Books');
-                };
-            }} />
-        <BottomNavigationTab title={TitleAdd} icon={AddIcon({ fill: 'black' })} />
-    </BottomNavigation>
-);
+const BottomTabBarUiKitten = ({ navigation, state }: BottomTabBarProps) => {
+
+    let previousTabIndex = useRef(0);
+
+    return (
+        <BottomNavigation
+            style={{ height: '7%' }}
+            indicatorStyle={{ backgroundColor: 'black', borderWidth: 0.1 }}
+            selectedIndex={state.index}
+            onSelect={index => navigation.navigate(state.routeNames[index])}
+        >
+            <BottomNavigationTab title={TitleHome} icon={HomeIcon({ fill: 'black' })}
+                onPressIn={() => {
+                    let amIAtBooks = (!navigation.getState().routes[0].state?.routes[1]?.name) ? true : false;
+                    if (!amIAtBooks && previousTabIndex.current == 0) {
+                        navigation.navigate('Books');
+                    };
+                    previousTabIndex.current = 0;
+                }} />
+            <BottomNavigationTab title={TitleAdd} icon={AddIcon({ fill: 'black' })}
+                onPressIn={() => {
+                    previousTabIndex.current = 1;
+                }} />
+        </BottomNavigation>
+    );
+};
 
 const Tab = createBottomTabNavigator();
 

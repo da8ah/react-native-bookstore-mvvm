@@ -1,4 +1,4 @@
-import { Divider, Layout, List, Text, Button } from '@ui-kitten/components';
+import { Divider, Layout, List, Text } from '@ui-kitten/components';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, SafeAreaView, StyleSheet } from 'react-native';
 import { Book } from '../core/entities/Book';
@@ -42,14 +42,19 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
     goToLogin = navigateLogin;
 
     const [books, setBooks] = useState<Book[] | null>();
+    const [refreshing, setRefreshing] = useState<boolean>(false);
 
-    useEffect(() => {
+    const queryDataFromServer = () => {
         setTimeout(async () => {
             if (!viewModelHomeBooks.isLoading()) {
                 await viewModelHomeBooks.getDataFromServer();
                 setBooks(viewModelHomeBooks.getBooksStored());
             }
         }, 2000);
+    };
+
+    useEffect(() => {
+        queryDataFromServer();
     }, [viewModelHomeBooks.isLoading()]);
 
     return (
@@ -73,9 +78,12 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
                                     data={books}
                                     renderItem={renderBookItem}
                                     listKey={'books'}
-                                    // refreshControl
-                                    // refreshing={true}
-                                    // onRefresh={() => console.log("Scrolled")}
+                                    refreshing={refreshing}
+                                    onRefresh={() => {
+                                        setRefreshing(true);
+                                        queryDataFromServer();
+                                        setTimeout(() => setRefreshing(false), 1000);
+                                    }}
                                 />
                             )}
                     </Layout>
