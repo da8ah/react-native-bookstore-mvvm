@@ -1,6 +1,7 @@
 import { DataSourceServer } from "../../../services/data/DataSourceServer";
 import { Book } from "../../entities/Book";
 import { AddNewBook } from "../../usecases/AddNewBook";
+import viewModelHomeBooks from "./ViewModelHomeBooks";
 
 export default class ViewModelAddBook {
 
@@ -11,6 +12,11 @@ export default class ViewModelAddBook {
     private inputsChecked: boolean = false;
     private bookToAdd: Book = new Book({ isbn: this.isbn, author: this.author, title: this.title, description: null, price: 0 });
     private bookSaved: boolean = false;
+
+    // Observer
+    public updateBooksScreen() {
+        viewModelHomeBooks.updateBooks();
+    }
 
     // Setters
     public setIsbn(isbn: string) {

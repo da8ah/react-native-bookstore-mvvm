@@ -48,7 +48,7 @@ const AddBookScreen = () => {
 
     // Patterns to Check Inputs
     const isbnRegEx: RegExp = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
-    const authorRegEx: RegExp = /^([a-zA-Z0-9-_. ]+)([,\.]?)(\s[a-zA-Z0-9-_. ]+)*$/;
+    const authorRegEx: RegExp = /^([a-zA-Z0-9-_.Ññ ]+)([,\.]?)(\s[a-zA-Z0-9-_.Ññ ]+)*$/;
     const titleRegEx: RegExp = /\w+/;
 
     // Input Persistence
@@ -91,6 +91,7 @@ const AddBookScreen = () => {
         if (viewModelAddBook.getBookSavedStatus()) {
             Alert.alert("Notification 🔔", "Book Saved!");
             clearInputs();
+            viewModelAddBook.updateBooksScreen();
             return;
         }
         Alert.alert("Error ❌", "Error while saving Book!\n\nPlease check Book's details again or contact Support for further help.");
@@ -138,6 +139,7 @@ const AddBookScreen = () => {
                         onBlur={() => setDefaultScrollHeight()}
                     >
                         <Input
+                            keyboardType='phone-pad'
                             ref={(component: Input) => isbnInputRef.current = component}
                             selectionColor='black'
                             style={styles.input}

@@ -2,7 +2,7 @@ import { Divider, Layout, List, Text } from '@ui-kitten/components';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, SafeAreaView, StyleSheet } from 'react-native';
 import { Book } from '../core/entities/Book';
-import { ViewModelHomeBooks } from '../core/ports/viewmodels/ViewModelHomeBooks';
+import viewModelHomeBooks, { BooksObserver } from '../core/ports/viewmodels/ViewModelHomeBooks';
 import { HomeBooksScreenProps } from './ScreenTypes';
 
 const renderBookItem = (allBooks: any) => (
@@ -32,7 +32,6 @@ const renderBookItem = (allBooks: any) => (
 );
 
 let goToLogin: any;
-const viewModelHomeBooks = new ViewModelHomeBooks();
 
 const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
 
@@ -44,51 +43,47 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
     const [books, setBooks] = useState<Book[] | null>();
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
+    const onLoadingUpdate: BooksObserver = (books: Book[]) => {
+        setBooks(books);
+    }
+
     const queryDataFromServer = () => {
         setTimeout(async () => {
-            if (!viewModelHomeBooks.isLoading()) {
-                await viewModelHomeBooks.getDataFromServer();
-                setBooks(viewModelHomeBooks.getBooksStored());
-            }
+            await viewModelHomeBooks.getDataFromServer();
+            setBooks(viewModelHomeBooks.getBooksStored());
         }, 2000);
     };
 
     useEffect(() => {
         queryDataFromServer();
-    }, [viewModelHomeBooks.isLoading()]);
+        viewModelHomeBooks.attach(onLoadingUpdate);
+        return () => viewModelHomeBooks.detach();
+    }, []);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {!books ?
-                (
-                    <Layout style={styles.container}>
-                        <Divider />
-                        <ActivityIndicator />
-                    </Layout>
-                ) : (
-                    <Layout style={styles.container}>
-                        <Text category='h3' status='primary' style={styles.header}>Welcome to BOOKSTORE!</Text>
-                        {viewModelHomeBooks.isLoading() ?
-                            (
-                                <ActivityIndicator style={styles.listContainer} />
-                            ) : (
-                                <List
-                                    style={styles.listContainer}
-                                    contentContainerStyle={styles.contentContainer}
-                                    data={books}
-                                    renderItem={renderBookItem}
-                                    listKey={'books'}
-                                    refreshing={refreshing}
-                                    onRefresh={() => {
-                                        setRefreshing(true);
-                                        queryDataFromServer();
-                                        setTimeout(() => setRefreshing(false), 1000);
-                                    }}
-                                />
-                            )}
-                    </Layout>
-                )
-            }
+            <Layout style={styles.container}>
+                <Text category='h3' status='primary' style={styles.header}>Welcome to BOOKSTORE!</Text>
+                {!books ?
+                    (
+                        <ActivityIndicator style={styles.listContainer} />
+                    ) : (
+                        <List
+                            style={styles.listContainer}
+                            contentContainerStyle={styles.contentContainer}
+                            data={books}
+                            extraData={books}
+                            renderItem={renderBookItem}
+                            listKey={'books'}
+                            refreshing={refreshing}
+                            onRefresh={() => {
+                                setRefreshing(true);
+                                queryDataFromServer();
+                                setTimeout(() => setRefreshing(false), 1000);
+                            }}
+                        />
+                    )}
+            </Layout>
         </SafeAreaView>
     );
 
