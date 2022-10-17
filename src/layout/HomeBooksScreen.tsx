@@ -6,7 +6,7 @@ import viewModelHomeBooks, { BooksObserver } from '../core/ports/viewmodels/View
 import { HomeBooksScreenProps } from './ScreenTypes';
 
 const renderBookItem = (allBooks: any) => (
-    <Pressable onPress={goToLogin}>
+    <Pressable testID='bookItem' onPress={goToLogin}>
         <Layout style={styles.bookLayout}>
             <Layout style={styles.bookInfoLayout}>
                 <Layout style={styles.bookAuthorAndIsbnLayout}>
@@ -48,9 +48,11 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
     }
 
     const queryDataFromServer = () => {
+        setRefreshing(true);
         setTimeout(async () => {
             await viewModelHomeBooks.getDataFromServer();
             setBooks(viewModelHomeBooks.getBooksStored());
+            setRefreshing(false);
         }, 2000);
     };
 
@@ -62,27 +64,19 @@ const HomeBooksScreen = ({ navigation }: HomeBooksScreenProps) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <Layout style={styles.container}>
+            <Layout testID='home' style={styles.container}>
                 <Text category='h3' status='primary' style={styles.header}>Welcome to BOOKSTORE!</Text>
-                {!books ?
-                    (
-                        <ActivityIndicator style={styles.listContainer} />
-                    ) : (
-                        <List
-                            style={styles.listContainer}
-                            contentContainerStyle={styles.contentContainer}
-                            data={books}
-                            extraData={books}
-                            renderItem={renderBookItem}
-                            listKey={'books'}
-                            refreshing={refreshing}
-                            onRefresh={() => {
-                                setRefreshing(true);
-                                queryDataFromServer();
-                                setTimeout(() => setRefreshing(false), 1000);
-                            }}
-                        />
-                    )}
+                <List
+                    testID='listBooks'
+                    style={styles.listContainer}
+                    contentContainerStyle={styles.contentContainer}
+                    data={books}
+                    extraData={books}
+                    renderItem={renderBookItem}
+                    listKey={'books'}
+                    refreshing={refreshing}
+                    onRefresh={queryDataFromServer}
+                />
             </Layout>
         </SafeAreaView>
     );

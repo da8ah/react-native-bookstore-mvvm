@@ -31,6 +31,7 @@ const BottomTabBarUiKitten = ({ navigation, state }: BottomTabBarProps) => {
 
     return (
         <BottomNavigation
+            testID='navigation'
             style={{ height: '7%' }}
             indicatorStyle={{ backgroundColor: 'black', borderWidth: 0.1 }}
             selectedIndex={state.index}

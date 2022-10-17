@@ -133,6 +133,7 @@ const AddBookScreen = () => {
                 <Text category='h3' status='primary' style={styles.header}>Welcome to BOOKSTORE!</Text>
                 <ScrollView contentContainerStyle={[styles.formContainer, { height: screenHeight }]} keyboardShouldPersistTaps='handled'>
                     <Card
+                        testID='cardAddBook'
                         style={styles.card}
                         header={Header}
                         footer={Footer}
